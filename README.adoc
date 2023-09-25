@@ -1,0 +1,49 @@
+== Postgres Ddl changes module
+
+The module can be installed on a postgres database, after installation it records the changes to the table metadata (ddl) after the ddl has been released (CREATE TABLE, CREATE TABLE AS, ALTER TABLE, DROP TABLE).
+
+Key features:
+[square]
+* Versioning schemas
+* Registration of columns for schemas (name, position, type, max lenght, precision, scale)
+* Capturing the timing of schema changes (when, from which, to which)
+* Active schema indication
+* Using table-level and column-level hashes
+
+[IMPORTANT]
+The module does not retroactively record changes to the schema. The initial_load script can be used to load the current schema versions.
+
+
+=== Components
+[format="csv", options="header"]
+|===
+Name,Type,Description
+ddl_changes,schema create script,Create ddl_changes schema.
+ddl_changes.ddl_changes_meta,table,Stores the metadata of the table versions.
+ddl_changes.ddl_changes_columns,table,Store the table columns.
+ddl_changes.ddl_changes_version_info,table,Store the ddl change history.
+initial_load,onetime script,Make a snapshot from the ddl-s.
+ddl_changes.f_log_ddl(),function,The function for recording ddl changes.
+et_log_ddl_info,evenet trigger,Call the f_log_ddl() function after a CREATE or ALTER TABLE.
+et_log_ddl_drop_info,evenet trigger,Call the f_log_ddl() function after a DROP TABLE.
+|===
+
+=== Installation guide
+
+[IMPORTANT]
+All scripts are Re-Runable
+
+ . Run the schema create script
+ .. code/schemas/ddl_changes.sql 
+ . Run the table create scripts
+ .. code/tables/ddl_changes_meta.sql
+ .. code/tables/ddl_changes_columns.sql
+ .. code/tables/ddl_changes_version_info.sql
+ . Run initial_load script
+ .. code/onetime_scripts/initial_load.sql
+ . Run the function create scripts
+ .. code/functions/f_log_ddl.sql
+ . Run the event triggger create scripts
+ .. code/event_triggers/et_log_ddl_info.sql
+ .. code/event_triggers/et_log_ddl_drop_info.sql
+
