@@ -1,0 +1,8 @@
+== Release notes
+
+=== Postgres Ddl changes module 1.1 release
+
+==== Contents of release
+* Add release note
+* Filter partitions
+* Fix ordering position hash bug
