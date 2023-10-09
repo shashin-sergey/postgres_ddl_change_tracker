@@ -45,18 +45,8 @@ BEGIN
                     ,''information_schema''
                     ,''ddl_changes''
                 )
-            AND object_identity in 
-               (
-                SELECT 
-                    concat_ws(
-                        ''.''
-                        ,table_schema
-                        ,table_name
-                    ) 
-                FROM 
-                    information_schema.tables
-                WHERE 
-                    table_type = ''BASE TABLE'')
+            AND object_identity not like ''%pg_toast%'' 
+            AND object_identity not like  ''%[]%''  
             AND object_identity not in 
                 (
                 SELECT 
@@ -73,7 +63,7 @@ BEGIN
                     END  AS partition_name 
                 FROM   
                     pg_catalog.pg_inherits
-                )
+                )         
             '
         ;
     ELSE
