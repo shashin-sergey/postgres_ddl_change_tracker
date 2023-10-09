@@ -4,5 +4,5 @@
 
 ==== Contents of release
 * Add release note
-* Filter partions
+* Filter partitions
 * Fix ordering position hash bug
