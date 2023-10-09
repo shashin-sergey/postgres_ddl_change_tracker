@@ -39,15 +39,41 @@ BEGIN
             FROM 
                 pg_event_trigger_dropped_objects() ddl 
             WHERE 
-                ddl.schema_name not like ''pg_temp%''
-            AND ddl.schema_name not in 
+                ddl.schema_name not in 
                 (
                     ''pg_catalog''
                     ,''information_schema''
                     ,''ddl_changes''
                 )
-            AND object_identity not like ''%pg_toast%'' 
-            AND object_identity not like  ''%[]%''
+            AND object_identity in 
+               (
+                SELECT 
+                    concat_ws(
+                        ''.''
+                        ,table_schema
+                        ,table_name
+                    ) 
+                FROM 
+                    information_schema.tables
+                WHERE 
+                    table_type = ''BASE TABLE'')
+            AND object_identity not in 
+                (
+                SELECT 
+                    CASE 
+                        WHEN  
+                            cast(inhrelid::regclass as text) like ''%.%''
+                        THEN
+                            cast(inhrelid::regclass as text)
+                        ELSE
+                            concat_ws(
+                                ''.''
+                                ,current_schema
+                                ,cast(inhrelid::regclass as text))
+                    END  AS partition_name 
+                FROM   
+                    pg_catalog.pg_inherits
+                )
             '
         ;
     ELSE
@@ -57,15 +83,41 @@ BEGIN
             FROM 
                 pg_event_trigger_ddl_commands() ddl 
             WHERE 
-                ddl.schema_name not like ''pg_temp%''
-            AND ddl.schema_name not in 
+                ddl.schema_name not in 
                 (
                     ''pg_catalog''
                     ,''information_schema''
                     ,''ddl_changes''
                 )
-            AND object_identity not like ''%pg_toast%'' 
-            AND object_identity not like  ''%[]%''
+            AND object_identity in 
+               (
+                SELECT 
+                    concat_ws(
+                        ''.''
+                        ,table_schema
+                        ,table_name
+                    ) 
+                FROM 
+                    information_schema.tables
+                WHERE 
+                    table_type = ''BASE TABLE'')
+            AND object_identity not in 
+                (
+                SELECT 
+                    CASE 
+                        WHEN  
+                            cast(inhrelid::regclass as text) like ''%.%''
+                        THEN
+                            cast(inhrelid::regclass as text)
+                        ELSE
+                            concat_ws(
+                                ''.''
+                                ,current_schema
+                                ,cast(inhrelid::regclass as text))
+                    END  AS partition_name 
+                FROM   
+                    pg_catalog.pg_inherits
+                )
             '
             ;  
     END IF;   
@@ -162,8 +214,16 @@ BEGIN
                     ,cast(
                         is_c.column_name as text
                     ) as column_name
-                    ,cast(
-                        is_c.ordinal_position as integer
+                    ,ROW_NUMBER () 
+                        OVER (
+                            PARTITION BY 
+                                is_c.table_catalog
+                                ,is_c.table_schema
+                                ,is_c.table_name
+                            ORDER BY 
+                                cast(
+                                    is_c.ordinal_position as integer
+                            )
                     ) as column_ordinal_position
                     ,cast(
                         is_c.data_type as text
