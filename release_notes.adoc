@@ -1,11 +1,11 @@
 == Release notes
 
-=== Postgres Ddl changes module 1.2 release
+=== Postgres Ddl changes module 1.1.2 release
 
 ==== Contents of release
 * Filtering out irrelevant alters
 
-=== Postgres Ddl changes module 1.1 release
+=== Postgres Ddl changes module 1.1.1 release
 
 ==== Contents of release
 * Add release note
