@@ -364,6 +364,12 @@ BEGIN
                     END IF;
                 
                 END IF;
+
+                -------------------------------------
+                ---Filtering out irrelevant alters---
+                -------------------------------------
+
+                CONTINUE WHEN v_ddl_version = v_last_ddl_version;              
     
                 --------------------------------
                 ---De-Activate the old schema---
@@ -527,6 +533,12 @@ BEGIN
      
         ELSE     
 
+            -------------------------------------
+            ---Filtering out irrelevant alters---
+            -------------------------------------
+
+            CONTINUE WHEN v_last_ddl_version = '0';  
+
             ----------------------------
             ---De-Activate the schema---
             ----------------------------
@@ -544,9 +556,9 @@ BEGIN
                
             EXECUTE v_status_false;
 
-            ----------------------------------------------------------
+            ---------------------------------------------------------------
             ---Log schema change to ddl_changes.ddl_changes_version_info---
-            ----------------------------------------------------------
+            ---------------------------------------------------------------
 
             INSERT INTO 
                 ddl_changes.ddl_changes_version_info
