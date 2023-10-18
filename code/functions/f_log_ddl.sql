@@ -537,7 +537,7 @@ BEGIN
             ---Filtering out irrelevant alters---
             -------------------------------------
 
-            CONTINUE WHEN v_last_ddl_version = 0;  
+            CONTINUE WHEN v_last_ddl_version = '0';  
 
             ----------------------------
             ---De-Activate the schema---
