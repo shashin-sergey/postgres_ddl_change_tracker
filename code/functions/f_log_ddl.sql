@@ -25,7 +25,11 @@ DECLARE
     v_tmp_drop text;
     v_trigger_type text;
 BEGIN 
-    
+     
+    -------------------------
+    ----- Version 1.1.3 -----
+    -------------------------
+
     ------------------------
     ---Check trigger type---
     ------------------------
@@ -33,6 +37,7 @@ BEGIN
     IF 
         tg_tag = 'DROP TABLE'
     THEN
+
         v_trigger_type := 
             'SELECT distinct 
                 replace(object_identity,''"'','''') as  object_identity
@@ -44,6 +49,7 @@ BEGIN
                     ''pg_catalog''
                     ,''information_schema''
                     ,''ddl_changes''
+                    ,''pg_temp''
                 )
             AND object_identity not like ''%pg_toast%'' 
             AND object_identity not like  ''%[]%''  
@@ -69,7 +75,7 @@ BEGIN
     ELSE
         v_trigger_type := 
             'SELECT distinct 
-                replace(object_identity,''"'','''') as  object_identity
+                replace(REGEXP_REPLACE( object_identity , ''^([^\.]*\.[^\.]*)\..*$'', ''\1''),''"'','''') as  object_identity
             FROM 
                 pg_event_trigger_ddl_commands() ddl 
             WHERE 
@@ -78,8 +84,9 @@ BEGIN
                     ''pg_catalog''
                     ,''information_schema''
                     ,''ddl_changes''
+                    ,''pg_temp''
                 )
-            AND object_identity in 
+            AND REGEXP_REPLACE( object_identity , ''^([^\.]*\.[^\.]*)\..*$'', ''\1'') in 
                (
                 SELECT 
                     concat_ws(
