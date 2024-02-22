@@ -1,6 +1,6 @@
---DROP TABLE IF EXISTS ddl_changes.ddl_changes_columns;
+--DROP TABLE IF EXISTS public.ddl_changes_columns;
 
-CREATE TABLE if NOT EXISTS ddl_changes.ddl_changes_columns (
+CREATE TABLE if NOT EXISTS public.ddl_changes_columns (
     column_id int4 NOT NULL GENERATED ALWAYS AS IDENTITY,
     table_hash text NOT NULL,
     column_name text NOT NULL,
@@ -12,13 +12,13 @@ CREATE TABLE if NOT EXISTS ddl_changes.ddl_changes_columns (
     CONSTRAINT ddl_changes_columns_pkey PRIMARY KEY (column_id)
 );
 
-COMMENT ON TABLE ddl_changes.ddl_changes_columns IS 'The table that stores the diferent versions of ddls.';
+COMMENT ON TABLE public.ddl_changes_columns IS 'The table that stores the diferent versions of ddls.';
 
-COMMENT ON COLUMN ddl_changes.ddl_changes_columns.column_id IS 'Identity column';
-COMMENT ON COLUMN ddl_changes.ddl_changes_columns.table_hash IS 'Hash of the table';
-COMMENT ON COLUMN ddl_changes.ddl_changes_columns.column_name IS 'Column name';
-COMMENT ON COLUMN ddl_changes.ddl_changes_columns.column_ordinal_position IS 'Column position (Not always a progressively increasing series of numbers)';
-COMMENT ON COLUMN ddl_changes.ddl_changes_columns.data_type IS 'Column data type';
-COMMENT ON COLUMN ddl_changes.ddl_changes_columns.character_maximum_length IS 'Column maximum length';
-COMMENT ON COLUMN ddl_changes.ddl_changes_columns.numeric_precision IS 'Numeric column precision';
-COMMENT ON COLUMN ddl_changes.ddl_changes_columns.numeric_scale IS 'Numeric column scale';
+COMMENT ON COLUMN public.ddl_changes_columns.column_id IS 'Identity column';
+COMMENT ON COLUMN public.ddl_changes_columns.table_hash IS 'Hash of the table';
+COMMENT ON COLUMN public.ddl_changes_columns.column_name IS 'Column name';
+COMMENT ON COLUMN public.ddl_changes_columns.column_ordinal_position IS 'Column position (Not always a progressively increasing series of numbers)';
+COMMENT ON COLUMN public.ddl_changes_columns.data_type IS 'Column data type';
+COMMENT ON COLUMN public.ddl_changes_columns.character_maximum_length IS 'Column maximum length';
+COMMENT ON COLUMN public.ddl_changes_columns.numeric_precision IS 'Numeric column precision';
+COMMENT ON COLUMN public.ddl_changes_columns.numeric_scale IS 'Numeric column scale';

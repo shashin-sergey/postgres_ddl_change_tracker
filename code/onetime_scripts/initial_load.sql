@@ -211,7 +211,7 @@ BEGIN
          v_tmp_create_th;
 
     v_ddl_changes_meta_load := 
-        'INSERT INTO ddl_changes.ddl_changes_meta
+        'INSERT INTO public.ddl_changes_meta
         (
             ddl_version
             ,db_name
@@ -244,7 +244,7 @@ BEGIN
                 (SELECT distinct 
                     table_hash 
                 FROM 
-                ddl_changes.ddl_changes_meta);';
+                public.ddl_changes_meta);';
                 
     --RAISE NOTICE 'v_ddl_changes_meta_load %', v_ddl_changes_meta_load;
     
@@ -252,7 +252,7 @@ BEGIN
         v_ddl_changes_meta_load;    
         
     v_ddl_changes_columns_load :=    
-        'INSERT INTO ddl_changes.ddl_changes_columns
+        'INSERT INTO public.ddl_changes_columns
         (
             table_hash
             ,column_name
@@ -279,7 +279,7 @@ BEGIN
         WHERE th.table_hash not in 
                 (SELECT distinct 
                     table_hash 
-                FROM ddl_changes.ddl_changes_columns);';
+                FROM public.ddl_changes_columns);';
                 
     --RAISE NOTICE 'v_ddl_changes_columns_load %', v_ddl_changes_columns_load;
     
@@ -287,7 +287,7 @@ BEGIN
         v_ddl_changes_columns_load;
         
     v_ddl_changes_version_info_load := '
-    INSERT INTO ddl_changes.ddl_changes_version_info
+    INSERT INTO public.ddl_changes_version_info
     (
         table_name_hash
         ,ddl_version_from
@@ -305,7 +305,7 @@ BEGIN
         tmp_c.table_name_hash not in 
             (SELECT distinct 
                 table_name_hash 
-            FROM ddl_changes.ddl_changes_version_info);';
+            FROM public.ddl_changes_version_info);';
             
     --RAISE NOTICE 'v_ddl_changes_version_info_load %', v_ddl_changes_version_info_load;
     
