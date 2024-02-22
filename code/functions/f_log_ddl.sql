@@ -1,5 +1,5 @@
 CREATE OR REPLACE function 
-    ddl_changes.f_log_ddl()
+    public.f_log_ddl()
 RETURNS 
     EVENT_TRIGGER
 AS
@@ -147,7 +147,7 @@ BEGIN
             'SELECT
                 ddl_version_to as last_ddl_version
             FROM
-                ddl_changes.ddl_changes_version_info
+                public.ddl_changes_version_info
             WHERE 
                 table_name_hash = 
                     ''' || v_table_name_hash || '''
@@ -337,7 +337,7 @@ BEGIN
                     'SELECT
                         ddl_version
                     FROM
-                        ddl_changes.ddl_changes_meta dcm
+                        public.ddl_changes_meta dcm
                     WHERE
                         ''' || v_table_hash || ''' = 
                             dcm.table_hash;';
@@ -354,7 +354,7 @@ BEGIN
                         'SELECT
                             max(ddl_version) + 1 as max_ddl_version
                         FROM
-                            ddl_changes.ddl_changes_meta
+                            public.ddl_changes_meta
                         WHERE
                             table_name_hash = 
                                 ''' || v_table_name_hash || ''';'; 
@@ -384,7 +384,7 @@ BEGIN
         
                 v_status_false := 
                     'UPDATE
-                        ddl_changes.ddl_changes_meta dcm
+                        public.ddl_changes_meta dcm
                     SET
                         active = 
                             false
@@ -405,15 +405,15 @@ BEGIN
                         (SELECT 
                             table_hash 
                         FROM 
-                            ddl_changes.ddl_changes_meta)
+                            public.ddl_changes_meta)
                 THEN
     
                      -------------------------------------------------------
-                    --Add the new scheama to ddl_changes.ddl_changes_meta---
+                    --Add the new scheama to public.ddl_changes_meta---
                     --------------------------------------------------------
                   
                     v_add_ddl_meta := 
-                        'INSERT INTO ddl_changes.ddl_changes_meta(
+                        'INSERT INTO public.ddl_changes_meta(
                             ddl_version
                             ,table_name_hash
                             ,db_name
@@ -447,7 +447,7 @@ BEGIN
                                 max(ddl_version) as max_ddl_version
                                 ,table_name_hash
                             FROM
-                                ddl_changes.ddl_changes_meta
+                                public.ddl_changes_meta
                             GROUP BY
                                 table_name_hash
                             ) ddl_ver 
@@ -462,16 +462,16 @@ BEGIN
                                 (SELECT distinct 
                                     table_hash 
                                 FROM 
-                                    ddl_changes.ddl_changes_meta dcm);';
+                                    public.ddl_changes_meta dcm);';
                            
                     EXECUTE v_add_ddl_meta;
            
                     --------------------------------------------------------------------
-                    --Add the new scheamas colums to  ddl_changes.ddl_changes_columns---
+                    --Add the new scheamas colums to  public.ddl_changes_columns---
                     --------------------------------------------------------------------
         
                     v_add_ddl_col := 
-                        'INSERT INTO ddl_changes.ddl_changes_columns (
+                        'INSERT INTO public.ddl_changes_columns (
                             table_hash
                             ,column_name
                             ,column_ordinal_position
@@ -500,7 +500,7 @@ BEGIN
         
                     v_status_true := 
                         'UPDATE
-                            ddl_changes.ddl_changes_meta dcm
+                            public.ddl_changes_meta dcm
                         SET
                             active = 
                                 true
@@ -514,11 +514,11 @@ BEGIN
                 END IF;
     
                 ---------------------------------------------------------------
-                ---Log schema change to ddl_changes.ddl_changes_version_info---
+                ---Log schema change to public.ddl_changes_version_info---
                 ---------------------------------------------------------------
        
                 INSERT INTO 
-                    ddl_changes.ddl_changes_version_info
+                    public.ddl_changes_version_info
                     (table_name_hash
                     ,ddl_version_from
                     ,ddl_version_to
@@ -552,7 +552,7 @@ BEGIN
   
             v_status_false := 
                 'UPDATE
-                    ddl_changes.ddl_changes_meta dcm
+                    public.ddl_changes_meta dcm
                 SET
                     active = false
                     ,last_mod_time = ''' || v_change_time || ''' 
@@ -564,11 +564,11 @@ BEGIN
             EXECUTE v_status_false;
 
             ---------------------------------------------------------------
-            ---Log schema change to ddl_changes.ddl_changes_version_info---
+            ---Log schema change to public.ddl_changes_version_info---
             ---------------------------------------------------------------
 
             INSERT INTO 
-                ddl_changes.ddl_changes_version_info
+                public.ddl_changes_version_info
                 (table_name_hash
                 ,ddl_version_from
                 ,ddl_version_to
